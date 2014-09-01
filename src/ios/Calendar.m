@@ -191,6 +191,8 @@
     NSString *callbackId = command.callbackId;
     NSDictionary* options = [command.arguments objectAtIndex:0];
     
+    NSString* uid        = [options objectForKey:@"uid"];
+    
     NSString* title      = [options objectForKey:@"title"];
     NSString* location   = [options objectForKey:@"location"];
     NSString* notes      = [options objectForKey:@"notes"];
@@ -203,7 +205,14 @@
     NSTimeInterval _endInterval = [endTime doubleValue] / 1000; // strip millis
     NSDate *myEndDate = [NSDate dateWithTimeIntervalSince1970:_endInterval];
     
-    NSArray *matchingEvents = [self findEKEventsWithTitle:title location:location notes:notes startDate:myStartDate endDate:myEndDate calendar:calendar];
+    NSArray *matchingEvents;
+    
+    if (uid != nil) {
+        EKEvent *event = [self.eventStore eventWithIdentifier:uid];
+        matchingEvents = event != nil ? [NSArray arrayWithObject:event] : [NSArray array];
+    } else {
+        matchingEvents = [self findEKEventsWithTitle:title location:location notes:notes startDate:myStartDate endDate:myEndDate calendar:calendar];
+    }
     
     NSError *error = NULL;
     for (EKEvent * event in matchingEvents) {
