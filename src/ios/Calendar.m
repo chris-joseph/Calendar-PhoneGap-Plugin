@@ -83,7 +83,7 @@
         [self writeJavascript:[pluginResult toErrorCallbackString:callbackId]];
     } else {
         NSLog(@"Reached Success");
-        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:myEvent.eventIdentifier];
         [self writeJavascript:[pluginResult toSuccessCallbackString:callbackId]];
     }
 }
@@ -163,7 +163,7 @@
             CDVPluginResult * pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error.userInfo.description];
             [self writeJavascript:[pluginResult toErrorCallbackString:callbackId]];
         } else {
-            CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+            CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:theEvent.eventIdentifier];
             [self writeJavascript:[pluginResult toSuccessCallbackString:callbackId]];
         }
     } else {
@@ -388,7 +388,7 @@
         [self writeJavascript:[pluginResult toErrorCallbackString:callbackId]];
     } else {
         NSLog(@"Reached Success");
-        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:myEvent.eventIdentifier];
         [self writeJavascript:[pluginResult toSuccessCallbackString:callbackId]];
     }
 }
