@@ -106,13 +106,14 @@ Calendar.prototype.createEventInNamedCalendar = function (title, location, notes
   }])
 };
 
-Calendar.prototype.deleteEvent = function (title, location, notes, startDate, endDate, successCallback, errorCallback) {
+Calendar.prototype.deleteEventById = function (uid, successCallback, errorCallback) {
   cordova.exec(successCallback, errorCallback, "Calendar", "deleteEvent", [{
-    "title": title,
-    "location": location,
-    "notes": notes,
-    "startTime": startDate instanceof Date ? startDate.getTime() : null,
-    "endTime": endDate instanceof Date ? endDate.getTime() : null
+    "uid": uid,
+    "title": null,
+    "location": null,
+    "notes": null,
+    "startTime": null,
+    "endTime": null
   }])
 };
 
@@ -124,6 +125,17 @@ Calendar.prototype.deleteEventFromNamedCalendar = function (title, location, not
     "startTime": startDate instanceof Date ? startDate.getTime() : null,
     "endTime": endDate instanceof Date ? endDate.getTime() : null,
     "calendarName": calendarName
+  }])
+};
+
+Calendar.prototype.findEventById = function (uid, successCallback, errorCallback) {
+  cordova.exec(successCallback, errorCallback, "Calendar", "findEvent", [{
+    "uid": uid,
+    "title": null,
+    "location": null,
+    "notes": null,
+    "startTime": null,
+    "endTime": null
   }])
 };
 
@@ -141,6 +153,22 @@ Calendar.prototype.findAllEventsInNamedCalendar = function (calendarName, succes
   cordova.exec(successCallback, errorCallback, "Calendar", "findAllEventsInNamedCalendar", [{
     "calendarName": calendarName
   }]);
+};
+
+Calendar.prototype.modifyEventById = function (uid, newTitle, newLocation, newNotes, newStartTime, newEndTime, successCallback, errorCallback) {
+  cordova.exec(successCallback, errorCallback, "Calendar", "modifyEvent", [{
+    "uid": uid,
+    "title": null,
+    "location": null,
+    "notes": null,
+    "startTime": null,
+    "endTime": null,
+    "newTitle": null,
+    "newLocation": null,
+    "newNotes": null,
+    "newStartTime": null,
+    "newEndTime": null
+  }])
 };
 
 Calendar.prototype.modifyEvent = function (title, location, notes, startDate, endDate, newTitle, newLocation, newNotes, newStartDate, newEndDate, successCallback, errorCallback) {
