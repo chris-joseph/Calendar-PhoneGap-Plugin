@@ -108,6 +108,8 @@
     
     NSDictionary* options = [command.arguments objectAtIndex:0];
     
+    NSString *uid        = [options objectForKey:@"uid"];
+    
     NSString* title      = [options objectForKey:@"title"];
     NSString* location   = [options objectForKey:@"location"];
     NSString* notes      = [options objectForKey:@"notes"];
@@ -129,13 +131,22 @@
     NSDateFormatter *df = [[NSDateFormatter alloc] init];
     [df setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
     
-    // Find matches
-    NSArray *matchingEvents = [self findEKEventsWithTitle:title location:location notes:notes startDate:myStartDate endDate:myEndDate calendar:calendar];
+    EKEvent *theEvent;
     
-    if (matchingEvents.count == 1) {
-        // Presume we have to have an exact match to modify it!
-        // Need to load this event from an EKEventStore so we can edit it
-        EKEvent *theEvent = [self.eventStore eventWithIdentifier:((EKEvent*)[matchingEvents lastObject]).eventIdentifier];
+    if (uid != nil) {
+        theEvent = [self.eventStore eventWithIdentifier:uid];
+    } else {
+        NSArray *matchingEvents = [self findEKEventsWithTitle:title location:location notes:notes startDate:myStartDate endDate:myEndDate calendar:calendar];
+        if ([matchingEvents count] == 1) {
+            // Need to load this event from an EKEventStore so we can edit it
+            EKEvent *matchingEvent = [matchingEvents lastObject];
+            theEvent = [self.eventStore eventWithIdentifier:matchingEvent.eventIdentifier];
+        } else {
+            theEvent = nil;
+        }
+    }
+    
+    if (theEvent != nil) {
         if (ntitle) {
             theEvent.title = ntitle;
         }
@@ -497,6 +508,8 @@
     
     NSDictionary* options = [command.arguments objectAtIndex:0];
     
+    NSString *uid        = [options objectForKey:@"uid"];
+    
     NSString* title      = [options objectForKey:@"title"];
     NSString* location   = [options objectForKey:@"location"];
     NSString* notes      = [options objectForKey:@"notes"];
@@ -517,7 +530,14 @@
         CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"No default calendar found. Is access to the Calendar blocked for this app?"];
         [self writeJavascript:[result toErrorCallbackString:command.callbackId]];
     } else {
-        NSArray *matchingEvents = [self findEKEventsWithTitle:title location:location notes:notes startDate:myStartDate endDate:myEndDate calendar:calendar];
+        NSArray *matchingEvents;
+        
+        if (uid != nil) {
+            EKEvent *event = [self.eventStore eventWithIdentifier:uid];
+            matchingEvents = event != nil ? [NSArray arrayWithObject:event] : [NSArray array];
+        } else {
+            matchingEvents = [self findEKEventsWithTitle:title location:location notes:notes startDate:myStartDate endDate:myEndDate calendar:calendar];
+        }
         
         NSMutableArray *finalResults = [[NSMutableArray alloc] initWithCapacity:matchingEvents.count];
         
