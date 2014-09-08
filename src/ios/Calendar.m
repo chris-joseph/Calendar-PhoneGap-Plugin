@@ -391,7 +391,7 @@
         EKRecurrenceRule *rule = [[EKRecurrenceRule alloc] initRecurrenceWithFrequency: [self toEKRecurrenceFrequency:recurrence]
                                                                               interval: 1
                                                                                    end: nil];
-        if (recurrenceEndTime != (id)[NSNull null]) {
+        if (recurrenceEndTime != nil && recurrenceEndTime != (id)[NSNull null]) {
             NSTimeInterval _recurrenceEndTimeInterval = [recurrenceEndTime doubleValue] / 1000; // strip millis
             NSDate *myRecurrenceEndDate = [NSDate dateWithTimeIntervalSince1970:_recurrenceEndTimeInterval];
             EKRecurrenceEnd *end = [EKRecurrenceEnd recurrenceEndWithEndDate:myRecurrenceEndDate];
