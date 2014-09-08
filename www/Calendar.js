@@ -130,12 +130,7 @@ Calendar.prototype.deleteEventFromNamedCalendar = function (title, location, not
 
 Calendar.prototype.findEventById = function (uid, successCallback, errorCallback) {
   cordova.exec(successCallback, errorCallback, "Calendar", "findEvent", [{
-    "uid": uid,
-    "title": null,
-    "location": null,
-    "notes": null,
-    "startTime": null,
-    "endTime": null
+    "uid": uid
   }])
 };
 
