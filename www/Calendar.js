@@ -153,16 +153,11 @@ Calendar.prototype.findAllEventsInNamedCalendar = function (calendarName, succes
 Calendar.prototype.modifyEventById = function (uid, newTitle, newLocation, newNotes, newStartTime, newEndTime, successCallback, errorCallback) {
   cordova.exec(successCallback, errorCallback, "Calendar", "modifyEvent", [{
     "uid": uid,
-    "title": null,
-    "location": null,
-    "notes": null,
-    "startTime": null,
-    "endTime": null,
-    "newTitle": null,
-    "newLocation": null,
-    "newNotes": null,
-    "newStartTime": null,
-    "newEndTime": null
+    "newTitle": newTitle,
+    "newLocation": newLocation,
+    "newNotes": newNotes,
+    "newStartTime": newStartTime,
+    "newEndTime": newEndTime
   }])
 };
 
