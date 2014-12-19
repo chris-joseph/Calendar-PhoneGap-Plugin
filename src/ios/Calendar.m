@@ -205,18 +205,19 @@
     NSTimeInterval _endInterval = [endTime doubleValue] / 1000; // strip millis
     NSDate *myEndDate = [NSDate dateWithTimeIntervalSince1970:_endInterval];
     
-    NSArray *matchingEvents;
+    NSError *error = NULL;
     
     if (uid != nil) {
         EKEvent *event = [self.eventStore eventWithIdentifier:uid];
-        matchingEvents = event != nil ? [NSArray arrayWithObject:event] : [NSArray array];
+        
+        NSError *error = nil;
+        [self.eventStore removeEvent:event span:EKSpanFutureEvents error:&error];
     } else {
-        matchingEvents = [self findEKEventsWithTitle:title location:location notes:notes startDate:myStartDate endDate:myEndDate calendar:calendar];
-    }
-    
-    NSError *error = NULL;
-    for (EKEvent * event in matchingEvents) {
-        [self.eventStore removeEvent:event span:EKSpanThisEvent error:&error];
+        NSArray *matchingEvents = [self findEKEventsWithTitle:title location:location notes:notes startDate:myStartDate endDate:myEndDate calendar:calendar];
+        
+        for (EKEvent * event in matchingEvents) {
+            [self.eventStore removeEvent:event span:EKSpanThisEvent error:&error];
+        }
     }
     
     if (error) {
