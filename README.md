@@ -112,9 +112,9 @@ Add the following xml to your `config.xml` to always use the latest version of t
 ```xml
 <gap:plugin name="nl.x-services.plugins.calendar" />
 ```
-or to use this exact version:
+or to use a specific version:
 ```xml
-<gap:plugin name="nl.x-services.plugins.calendar" version="4.2" />
+<gap:plugin name="nl.x-services.plugins.calendar" version="4.2.8" />
 ```
 
 
@@ -124,8 +124,8 @@ Basic operations, you'll want to copy-paste this for testing purposes:
 
 ```javascript
   // prep some variables
-  var startDate = new Date(2014,2,15,18,30,0,0,0); // beware: month 0 = january, 11 = december
-  var endDate = new Date(2014,2,15,19,30,0,0,0);
+  var startDate = new Date(2014,10,15,18,30,0,0,0); // beware: month 0 = january, 11 = december
+  var endDate = new Date(2014,10,15,19,30,0,0,0);
   var title = "My nice event";
   var location = "Home";
   var notes = "Some notes about this event.";
@@ -163,7 +163,7 @@ Basic operations, you'll want to copy-paste this for testing purposes:
   // create an event in a named calendar (iOS only for now)
   window.plugins.calendar.createEventInNamedCalendar(title,location,notes,startDate,endDate,calendarName,success,error);
 
-  // find events
+  // find events (on iOS this includes a list of attendees (if any))
   window.plugins.calendar.findEvent(title,location,notes,startDate,endDate,success,error);
 
   // list all events in a date range (only supported on Android for now)
@@ -172,15 +172,23 @@ Basic operations, you'll want to copy-paste this for testing purposes:
   // list all calendar names - returns this JS Object to the success callback: [{"id":"1", "name":"first"}, ..]
   window.plugins.calendar.listCalendars(success,error);
 
-  // find all events in a named calendar (iOS only for now)
+  // find all events in a named calendar (iOS only for now, this includes a list of attendees (if any))
   window.plugins.calendar.findAllEventsInNamedCalendar(calendarName,success,error);
 
   // change an event (iOS only for now)
   var newTitle = "New title!";
   window.plugins.calendar.modifyEvent(title,location,notes,startDate,endDate,newTitle,location,notes,startDate,endDate,success,error);
 
-  // delete an event (you can pass nulls for irrelevant parameters, note that on Android `notes` is ignored)
+  // delete an event (you can pass nulls for irrelevant parameters, note that on Android `notes` is ignored). The dates are mandatory and represent a date range to delete events in.
+  // note that on iOS there is a bug where the timespan must not be larger than 4 years, see issue 102 for details.. call this method multiple times if need be
   window.plugins.calendar.deleteEvent(newTitle,location,notes,startDate,endDate,success,error);
+  
+  // open the calendar app (added in 4.2.8):
+  // - open it at 'today'
+  window.plugins.calendar.openCalendar();
+  // - open at a specific date, here today + 3 days
+  var d = new Date(new Date().getTime() + 3*24*60*60*1000);
+  window.plugins.calendar.openCalendar(d, success, error); // callbacks are optional
 ```
 
 Creating an all day event:

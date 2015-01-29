@@ -34,6 +34,16 @@ Calendar.prototype.deleteCalendar = function (calendarName, successCallback, err
   }]);
 };
 
+Calendar.prototype.openCalendar = function (date, successCallback, errorCallback) {
+  // default: today
+  if (!(date instanceof Date)) {
+    date = new Date();
+  }
+  cordova.exec(successCallback, errorCallback, "Calendar", "openCalendar", [{
+    "date": date.getTime()
+  }]);
+};
+
 Calendar.prototype.getCalendarOptions = function () {
   return {
     firstReminderMinutes: 60,
@@ -109,6 +119,18 @@ Calendar.prototype.createEventInNamedCalendar = function (title, location, notes
 Calendar.prototype.deleteEventById = function (uid, successCallback, errorCallback) {
   cordova.exec(successCallback, errorCallback, "Calendar", "deleteEvent", [{
     "uid": uid
+  }])
+};
+
+Calendar.prototype.deleteEvent = function (title, location, notes, startDate, endDate, successCallback, errorCallback) {
+  if (!(startDate instanceof Date && endDate instanceof Date)) {
+    errorCallback("startDate and endDate must be JavaScript Date Objects");
+  }
+  cordova.exec(successCallback, errorCallback, "Calendar", "deleteEvent", [{
+    "location": location,
+    "notes": notes,
+    "startTime": startDate instanceof Date ? startDate.getTime() : null,
+    "endTime": endDate instanceof Date ? endDate.getTime() : null
   }])
 };
 
