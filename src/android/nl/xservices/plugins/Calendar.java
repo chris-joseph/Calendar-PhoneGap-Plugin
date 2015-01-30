@@ -26,6 +26,7 @@ public class Calendar extends CordovaPlugin {
   public static final String ACTION_OPEN_CALENDAR = "openCalendar";
   public static final String ACTION_CREATE_EVENT_WITH_OPTIONS = "createEventWithOptions";
   public static final String ACTION_CREATE_EVENT_INTERACTIVELY = "createEventInteractively";
+  public static final String ACTION_MODIFY_EVENT = "modifyEvent";
   public static final String ACTION_DELETE_EVENT = "deleteEvent";
   public static final String ACTION_FIND_EVENT = "findEvent";
   public static final String ACTION_LIST_EVENTS_IN_RANGE = "listEventsInRange";
@@ -62,6 +63,8 @@ public class Calendar extends CordovaPlugin {
       return listEventsInRange(args);
     } else if (!hasLimitedSupport && ACTION_FIND_EVENT.equals(action)) {
       return findEvents(args);
+    } else if (!hasLimitedSupport && ACTION_MODIFY_EVENT.equals(action)) {
+      return modifyEvent(args);
     } else if (!hasLimitedSupport && ACTION_DELETE_EVENT.equals(action)) {
       return deleteEvent(args);
     } else if (ACTION_LIST_CALENDARS.equals(action)) {
@@ -165,6 +168,35 @@ public class Calendar extends CordovaPlugin {
     }
     return this.calendarAccessor;
   }
+  
+  private boolean modifyEvent(JSONArray args) {
+    if (args.length() == 0) {
+      System.err.println("Exception: No Arguments passed");
+   } else {
+      try {
+        JSONObject json = args.getJSONObject(0);
+        boolean deleteResult = getCalendarAccessor().modifyEvent(
+            null,
+            json.optLong("uid"),
+            json.optLong("startTime"),
+            json.optLong("endTime"),
+            json.optString("title"),
+            json.optString("location"),
+            json.optLong("newStartTime"),
+            json.optLong("newEndTime"),
+            json.optString("newTitle"),
+            json.optString("newNotes"),
+            json.optString("newLocation"));
+        PluginResult res = new PluginResult(PluginResult.Status.OK, deleteResult);
+        res.setKeepCallback(true);
+        callback.sendPluginResult(res);
+        return true;
+      } catch (JSONException e) {
+        System.err.println("Exception: " + e.getMessage());
+      }
+    }
+    return false;
+  }
 
   private boolean deleteEvent(JSONArray args) {
     if (args.length() == 0) {
@@ -174,6 +206,7 @@ public class Calendar extends CordovaPlugin {
         JSONObject jsonFilter = args.getJSONObject(0);
         boolean deleteResult = getCalendarAccessor().deleteEvent(
             null,
+            jsonFilter.optLong("uid"),
             jsonFilter.optLong("startTime"),
             jsonFilter.optLong("endTime"),
             jsonFilter.optString("title"),
@@ -196,6 +229,7 @@ public class Calendar extends CordovaPlugin {
     try {
       JSONObject jsonFilter = args.getJSONObject(0);
       JSONArray jsonEvents = getCalendarAccessor().findEvents(
+          jsonFilter.optLong("uid"),
           jsonFilter.isNull("title") ? null : jsonFilter.optString("title"),
           jsonFilter.isNull("location") ? null : jsonFilter.optString("location"),
           jsonFilter.optLong("startTime"),
@@ -217,7 +251,7 @@ public class Calendar extends CordovaPlugin {
       final JSONObject argObject = args.getJSONObject(0);
       final JSONObject argOptionsObject = argObject.getJSONObject("options");
 
-      getCalendarAccessor().createEvent(
+      long id = getCalendarAccessor().createEvent(
           null,
           argObject.getString("title"),
           argObject.getLong("startTime"),
@@ -230,7 +264,7 @@ public class Calendar extends CordovaPlugin {
           argOptionsObject.isNull("recurrenceEndTime") ? null : argOptionsObject.getLong("recurrenceEndTime")
       );
 
-      callback.success();
+      callback.success(Long.toString(id));
       return true;
     } catch (Exception e) {
       System.err.println("Exception: " + e.getMessage());

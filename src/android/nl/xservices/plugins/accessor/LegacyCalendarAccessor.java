@@ -113,19 +113,26 @@ public class LegacyCalendarAccessor extends AbstractCalendarAccessor {
     return this.cordova.getActivity().managedQuery(Uri.parse(uri), projection,
         selection, selectionArgs, sortOrder);
   }
-
+  
   @Override
-  public boolean deleteEvent(Uri eventsUri, long startFrom, long startTo, String title, String location) {
+  public boolean modifyEvent(Uri eventsUri, long id, long startFrom, long startTo, String title, String location,
+          long newStartFrom, long newStartTo, String newTitle, String newDescription, String newLocation) {
     eventsUri = eventsUri == null ? Uri.parse(CONTENT_PROVIDER_PRE_FROYO + CONTENT_PROVIDER_PATH_EVENTS) : eventsUri;
-    return super.deleteEvent(eventsUri, startFrom, startTo, title, location);
+    return super.modifyEvent(eventsUri, id, startFrom, startTo, title, location, newStartFrom, newStartTo, newTitle, newDescription, newLocation);
   }
 
   @Override
-  public void createEvent(Uri eventsUri, String title, long startTime, long endTime,
+  public boolean deleteEvent(Uri eventsUri, long id, long startFrom, long startTo, String title, String location) {
+    eventsUri = eventsUri == null ? Uri.parse(CONTENT_PROVIDER_PRE_FROYO + CONTENT_PROVIDER_PATH_EVENTS) : eventsUri;
+    return super.deleteEvent(eventsUri, id, startFrom, startTo, title, location);
+  }
+
+  @Override
+  public long createEvent(Uri eventsUri, String title, long startTime, long endTime,
                              String description, String location, Long firstReminderMinutes, Long secondReminderMinutes,
                              String recurrence, Long recurrenceEndTime) {
     eventsUri = eventsUri == null ? Uri.parse(CONTENT_PROVIDER_PRE_FROYO + CONTENT_PROVIDER_PATH_EVENTS) : eventsUri;
-    super.createEvent(eventsUri, title, startTime, endTime, description, location,
+    return super.createEvent(eventsUri, title, startTime, endTime, description, location,
         firstReminderMinutes, secondReminderMinutes, recurrence, recurrenceEndTime);
   }
 
